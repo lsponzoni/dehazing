@@ -14,10 +14,16 @@ TEMPLATE = app
 
 SOURCES += statistics.cpp \
     main.cpp \
-    matrix.cpp
+    matrix.cpp \
+    gui/imagemodel.cpp \
+    gui/controller.cpp \
+    gui/pixmapview.cpp
 
 
 HEADERS += \
     matrix.h \
     triple.h \
-    statistics.h
+    statistics.h \
+    gui/imagemodel.h \
+    gui/controller.h \
+    gui/pixmapview.h
