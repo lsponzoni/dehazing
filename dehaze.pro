@@ -15,6 +15,7 @@ TEMPLATE = app
 SOURCES += statistics.cpp \
     main.cpp \
     matrix.cpp \
+    transmission.cpp \
     gui/imagemodel.cpp \
     gui/controller.cpp \
     gui/pixmapview.cpp
@@ -22,8 +23,9 @@ SOURCES += statistics.cpp \
 
 HEADERS += \
     matrix.h \
-    triple.h \
     statistics.h \
+    transmission.cpp \
+    triple.h \
     gui/imagemodel.h \
     gui/controller.h \
     gui/pixmapview.h
