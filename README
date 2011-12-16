@@ -1,0 +1,3 @@
+Implementation of the dehazing algorithm as described
+in Fattal, Raanan; "Single Image Dehazing", presented
+on SIGGRAPH '08.
