@@ -3,8 +3,6 @@
 
 #include "triple.h"
 
-typedef triple<double,double,double> dtriple;
-
 double sqr(double x);
 double norm(const triple<double,double,double> &x);
 

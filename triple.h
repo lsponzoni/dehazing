@@ -16,4 +16,7 @@ struct triple
     triple(const triple &t) : fst(t.fst), snd(t.snd), trd(t.trd) {}
 };
 
+// Common triple types
+typedef triple<double, double, double> dtriple;
+
 #endif // TRIPLE_H

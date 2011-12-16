@@ -13,7 +13,8 @@ TEMPLATE = app
 
 
 SOURCES += statistics.cpp \
-    main.cpp
+    main.cpp \
+    matrix.cpp
 
 
 HEADERS += \
