@@ -12,12 +12,15 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += statistics.cpp \
+SOURCES += \
     main.cpp \
-    matrix.cpp
+    matrix.cpp \
+    statistics.cpp \
+    transmission.cpp
 
 
 HEADERS += \
     matrix.h \
-    triple.h \
-    statistics.h
+    statistics.h \
+    transmission.h \
+    triple.h 
