@@ -13,14 +13,6 @@
 #include "transmission.h"
 
 
-// template
-double corr(int i, int j, dmatrix *fs, dmatrix *gs, dmatrix *o);
-double expectation(int i, int j, dmatrix *fs, dmatrix *o, double Wx);
-double pound(int i, int j, dmatrix *o);
-void set_block(int &starti,int &startj, int &end_I, int &end_J, int i,int j,int h,int w);
-double w(double ox, double oy, double deviation);
-double dist(double o1,double o2);
-
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -131,7 +123,7 @@ dmatrix *estimateTransmissionMultiAlbedo (tmatrix *image, dtriple airlight)
     dmatrix n(image->w, image->h);
     for (int i=0; i<image->h; i++) {
         for (int j=0; j<image->w; j++) {
-            n.pos(i,j) = corr(i, j, &Ia, &h, &o)/ corr(i, j, &Ir, &h, &o);
+            n.pos(i,j) = w_covar(i, j, &Ia, &h, &o)/ w_covar(i, j, &Ir, &h, &o);
         }
     }
 

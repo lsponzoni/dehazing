@@ -1,12 +1,23 @@
 #include <cmath>
 #include "statistics.h"
 
-double pound(int i, int j, dmatrix*o);
-void set_block(int &starti, int &startj,
-               int &end_I, int &end_J,
-               int i, int j, int h, int w);
-double w(double ox, double oy, double deviation);
-double dist(double o1, double o2);
+// Sum the weights of the pixels in a neighborhood
+double sum_weights(int center_i, int center_j, dmatrix *theta);
+
+// 4.1 w(x,y) = exp( - dist( O(x), O(y))^2/ deviation ^ 2)
+double weight(double theta_x, double theta_y);
+
+// Arc distance between two angles (in RADIANS)
+double arc_dist(double alpha, double beta);
+
+// Obtain the boundaries of a pixel neighborhood
+inline void get_boundaries(int center_i, int center_j,
+                           int &init_i, int &init_j,
+                           int &end_i, int &end_j);
+
+const int NEIGHB_SIZE = 24;
+const double DEVIATION_SQ = (1.0/(8*8));
+const double PI = atan(1.0) * 4.0;
 
 double sqr(double x)
 {
@@ -40,116 +51,119 @@ double covar(double *xs, double *ys, int n)
     return sum / n;
 }
 
+double w_covar(int center_i, int center_j,
+               dmatrix *im_f, dmatrix *im_g,
+               dmatrix *theta)
+{
+    // Obtain the sum of all weights
+    double Wx = sum_weights(center_i, center_j, theta);
 
-// 4. robust estimator for Correlation
-// 4.1 w(x,y) = exp( - dist( O(x), O(y))^2/ deviation ^ 2) <could make a map here for better performance>
-// 4.2 Wx = Sum(w(x,y))
-// 4.3 Ex(f) = 1/Wx*(sum f(y) * w(x,y) )
-// 4.4 Correlation = (sum (f(y) - E(x,y,f))(g(y) - E(x,y,g) * w(x,y))/Wx
-// 4.5 Substitute those equations where they where used on constant albedo to have an aproximation of t
-// 4.6
-// 4.7
-// 4.8
-//******************************************
-// Multi albedo
-// TODO i got problems thinking on acessing the positions through pointers to data
-// so i'm passing the matrix's and positions
-//
-// const int DIMENSION = 24;
-const double DEVIATION = 1/8;
-const double PI = 3.14;
+    // Obtain the expectations on the same region
+    double Ef = w_expect(center_i, center_j, im_f, theta, Wx);
+    double Eg = w_expect(center_i, center_j, im_g, theta, Wx);
 
-double corr(int i, int j, dmatrix *fs, dmatrix *gs, dmatrix *o){
-    double Wx = pound(i, j, o);
+    // Obtain the boundaries
+    int init_i, init_j, end_i, end_j;
+    get_boundaries(center_i, center_j,
+                   init_i, init_j, end_i, end_j);
 
-    double ef = expectation(i, j, fs, o, Wx) ;
-    double eg = expectation(i, j, gs, o, Wx) ;
+    // Constant values, calculate only once
+    double center_theta = theta->pos(center_i, center_j);
 
-    int a,b, max_I, max_J;
-    set_block(a,b, max_I, max_J, i, j, o->h, o->w);
-
+    // Sum over all the pixels in the region
     double sum = 0;
-    for(a; a < max_I; a++){
-        for(b; b < max_J; b++){
-            if(a != i && b != j){
-                double k = fs->pos(a,b) - ef;
-                double d = gs->pos(a,b) - eg;
+    for (int i=init_i; i < end_i; i++) {
+        int wrap_i = i % im_f->h;
 
-                sum +=  k * d * w(o->pos(i,j),o->pos(a, b), DEVIATION);
-            }
+        for (int j=init_j; j < end_j; j++) {
+            int wrap_j = j % im_f->w;
+
+            double f_part = im_f->pos(wrap_i, wrap_j) - Ef;
+            double g_part = im_g->pos(wrap_i, wrap_j) - Eg;
+            double thet   = theta->pos(wrap_i, wrap_j);
+
+            sum +=  f_part * g_part * weight(thet, center_theta);
         }
     }
 
     return sum/ Wx;
 }
 
-double expectation(int i, int j, dmatrix *fs, dmatrix *o, double Wx){
+double w_expect(int center_i, int center_j,
+                dmatrix *image, dmatrix *theta, double Wx)
+{
+    // Obtain the boundaries
+    int init_i, init_j, end_i, end_j;
+    get_boundaries(center_i, center_j,
+                   init_i, init_j, end_i, end_j);
 
-    int a,b, max_I, max_J;
-    set_block(a , b, max_I, max_J, i, j, o->h, o->w);
+    // Constant values, calculate only once
+    double center_theta = theta->pos(center_i, center_j);
 
-    // for each pixel in neighborhood of say 24 x 24
+    // Sum over all pixels in the region
     double sum = 0;
+    for (int i=init_i; i < end_i; i++) {
+        int wrap_i = i % image->h;
 
-    for(a; a < max_I; a++){
-        for(b; b < max_J; b++){
-            if(a != i && b != j){
-                double k = fs-> pos(i,j);
+        for (int j=init_j; j < end_j; j++) {
+            int wrap_j = j % image->w;
 
-                sum +=  k * w(o->pos(i,j),o->pos(a, b),DEVIATION);
-            }
+            double pix = image->pos(wrap_i, wrap_j);
+            double curr_theta = theta->pos(wrap_i, wrap_j);
+
+            sum +=  pix * weight(curr_theta, center_theta);
         }
     }
-    return sum/ Wx;
+
+    return sum / Wx;
 }
 
-double pound(int i, int j, dmatrix *o){
+double sum_weights(int center_i, int center_j, dmatrix *theta)
+{
+    // Obtain the boundaries
+    int init_i, init_j, end_i, end_j;
+    get_boundaries(center_i, center_j,
+                   init_i, init_j, end_i, end_j);
 
-    int a, b, max_I, max_J;
-    set_block(a, b, max_I, max_J, i, j, o->h, o->w);
+    // Constant values, calculate only once
+    double center_theta = theta->pos(center_i, center_j);
 
+    // Sum over all pixels in the region
     double sum = 0;
-    for(a; a < max_I; a++){
-        for(b; b < max_J; b++){
-            if(a != i && b != j){
-                sum +=  w(o->pos(i,j),o->pos(a, b),DEVIATION);
-            }
+    for(int i=init_i; i < end_i; i++) {
+        int wrap_i = i % theta->h;
+
+        for(int j=init_j; j < end_j; j++) {
+            int wrap_j = j % theta->w;
+
+            double curr_theta = theta->pos(wrap_i, wrap_j);
+            sum += weight(curr_theta, center_theta);
         }
     }
+
     return sum;
 }
 
-void set_block(int &starti,int &startj, int &end_I, int &end_J, int i,int j,int h,int w){
-    const int DIMENSION = 24;
-
-    starti = i - i % DIMENSION;
-    startj = j - j % DIMENSION;
-
-    end_I = h;
-    end_J = w;
-
-    if(starti + DIMENSION < end_I){
-        end_I = starti + DIMENSION;
-    }
-
-    if(startj + DIMENSION < end_J){
-        end_J = startj + DIMENSION;
-    }
+void get_boundaries(int center_i, int center_j,
+                    int &init_i, int &init_j,
+                    int &end_i, int &end_j)
+{
+    init_i = center_i - NEIGHB_SIZE/2;
+    init_j = center_j - NEIGHB_SIZE/2;
+    end_i  = init_i + NEIGHB_SIZE;
+    end_j  = init_j + NEIGHB_SIZE;
 }
 
 // 4.1 w(x,y) = exp( - dist( O(x), O(y))^2/ deviation ^ 2)
-double w(double ox, double oy, double deviation){
-    double d = (dist( ox, oy ) /  deviation);
-    return exp( - d * d);
+double weight(double theta_x, double theta_y){
+    double dist = arc_dist(theta_x, theta_y);
+    double frac = -(dist * dist) / DEVIATION_SQ;
+    return exp(frac);
 }
 
-// 3. map pixel chroma into angles dist(o1,o2) = min |o1 - o2|, 2pi - |o1 - o2|
-double dist(double o1,double o2){
-    double a1 = fabs(o1 - o2);
-    double a2 = 2*PI - a1;
+double arc_dist(double alpha, double beta){
+    double dist1 = fabs(alpha - beta);
+    double dist2 = 2*PI - dist1;
 
-    if (a1 > a2)
-        return a2;
-    else
-        return a1;
+    return std::min(dist1, dist2);
 }
