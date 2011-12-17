@@ -1,6 +1,7 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
+#include "matrix.h"
 #include "triple.h"
 
 double sqr(double x);
@@ -16,6 +17,10 @@ double expect(double *vals, int n);
  */
 double covar(double *xs, double *ys, int n);
 
+
+double corr(int i, int j, dmatrix *fs, dmatrix *gs, dmatrix *o);
+
+double expectation(int i, int j, dmatrix *fs, dmatrix *o, double Wx);
 
 
 #endif // STATISTICS_H
