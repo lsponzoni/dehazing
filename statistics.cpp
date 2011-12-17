@@ -74,14 +74,11 @@ double w_covar(int center_i, int center_j,
     // Sum over all the pixels in the region
     double sum = 0;
     for (int i=init_i; i < end_i; i++) {
-        int wrap_i = i % im_f->h;
-
         for (int j=init_j; j < end_j; j++) {
-            int wrap_j = j % im_f->w;
 
-            double f_part = im_f->pos(wrap_i, wrap_j) - Ef;
-            double g_part = im_g->pos(wrap_i, wrap_j) - Eg;
-            double thet   = theta->pos(wrap_i, wrap_j);
+            double f_part = im_f->pos(i, j) - Ef;
+            double g_part = im_g->pos(i, j) - Eg;
+            double thet   = theta->pos(i, j);
 
             sum +=  f_part * g_part * weight(thet, center_theta);
         }
@@ -104,13 +101,10 @@ double w_expect(int center_i, int center_j,
     // Sum over all pixels in the region
     double sum = 0;
     for (int i=init_i; i < end_i; i++) {
-        int wrap_i = i % image->h;
-
         for (int j=init_j; j < end_j; j++) {
-            int wrap_j = j % image->w;
 
-            double pix = image->pos(wrap_i, wrap_j);
-            double curr_theta = theta->pos(wrap_i, wrap_j);
+            double pix = image->pos(i, j);
+            double curr_theta = theta->pos(i, j);
 
             sum +=  pix * weight(curr_theta, center_theta);
         }
@@ -131,13 +125,10 @@ double sum_weights(int center_i, int center_j, dmatrix *theta)
 
     // Sum over all pixels in the region
     double sum = 0;
-    for(int i=init_i; i < end_i; i++) {
-        int wrap_i = i % theta->h;
+    for(int i = init_i; i < end_i; i++) {
+        for(int j = init_j; j < end_j; j++) {
 
-        for(int j=init_j; j < end_j; j++) {
-            int wrap_j = j % theta->w;
-
-            double curr_theta = theta->pos(wrap_i, wrap_j);
+            double curr_theta = theta->pos(i, j);
             sum += weight(curr_theta, center_theta);
         }
     }
@@ -145,15 +136,29 @@ double sum_weights(int center_i, int center_j, dmatrix *theta)
     return sum;
 }
 
+// Changes made
+// 1. It doesn't make any sense to consider a thorus in this application
+// 2. Clamping square seems to make more sense
+// 3. init_i + neight_size in a ciclic situation will actually do a loop
+// 4. No wrap_i and j in the functions calling this
 void get_boundaries(int center_i, int center_j,
                     int width, int height,
                     int &init_i, int &init_j,
                     int &end_i, int &end_j)
 {
-    init_i = (center_i - NEIGHB_SIZE/2 + height) % height;
-    init_j = (center_j - NEIGHB_SIZE/2 + width) % width;
+    init_i = center_i - NEIGHB_SIZE/2;
+    init_j = center_j - NEIGHB_SIZE/2;
+
     end_i  = init_i + NEIGHB_SIZE;
     end_j  = init_j + NEIGHB_SIZE;
+
+    // Clamp the boundaries to figure dimension
+    if (init_i < 0) init_i = 0;
+    if (init_j < 0) init_j = 0;
+
+    if (end_i > height) end_i = height;
+    if (end_j > width) end_j = width;
+
 }
 
 // 4.1 w(x,y) = exp( - dist( O(x), O(y))^2/ deviation ^ 2)
