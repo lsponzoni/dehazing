@@ -17,8 +17,8 @@ SOURCES += statistics.cpp \
     matrix.cpp \
     transmission.cpp \
     gui/imagemodel.cpp \
-    gui/controller.cpp \
-    gui/pixmapview.cpp
+    gui/pixmapview.cpp \
+    gui/mainwindow.cpp
 
 
 HEADERS += \
@@ -27,5 +27,5 @@ HEADERS += \
     transmission.cpp \
     triple.h \
     gui/imagemodel.h \
-    gui/controller.h \
-    gui/pixmapview.h
+    gui/pixmapview.h \
+    gui/mainwindow.h

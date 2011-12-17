@@ -8,11 +8,14 @@
 #include <QString>
 #include <QStringList>
 
-#include "gui/controller.h"
+#include "gui/mainwindow.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    Controller control;
-    return a.exec();
+    QApplication app(argc, argv);
+
+    MainWindow win;
+    win.show();
+
+    return app.exec();
 }
