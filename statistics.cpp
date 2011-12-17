@@ -12,6 +12,7 @@ double arc_dist(double alpha, double beta);
 
 // Obtain the boundaries of a pixel neighborhood
 inline void get_boundaries(int center_i, int center_j,
+                           int width, int height,
                            int &init_i, int &init_j,
                            int &end_i, int &end_j);
 
@@ -64,7 +65,7 @@ double w_covar(int center_i, int center_j,
 
     // Obtain the boundaries
     int init_i, init_j, end_i, end_j;
-    get_boundaries(center_i, center_j,
+    get_boundaries(center_i, center_j, im_f->w, im_f->h,
                    init_i, init_j, end_i, end_j);
 
     // Constant values, calculate only once
@@ -94,7 +95,7 @@ double w_expect(int center_i, int center_j,
 {
     // Obtain the boundaries
     int init_i, init_j, end_i, end_j;
-    get_boundaries(center_i, center_j,
+    get_boundaries(center_i, center_j, image->w, image->h,
                    init_i, init_j, end_i, end_j);
 
     // Constant values, calculate only once
@@ -122,7 +123,7 @@ double sum_weights(int center_i, int center_j, dmatrix *theta)
 {
     // Obtain the boundaries
     int init_i, init_j, end_i, end_j;
-    get_boundaries(center_i, center_j,
+    get_boundaries(center_i, center_j, theta->w, theta->h,
                    init_i, init_j, end_i, end_j);
 
     // Constant values, calculate only once
@@ -145,11 +146,12 @@ double sum_weights(int center_i, int center_j, dmatrix *theta)
 }
 
 void get_boundaries(int center_i, int center_j,
+                    int width, int height,
                     int &init_i, int &init_j,
                     int &end_i, int &end_j)
 {
-    init_i = center_i - NEIGHB_SIZE/2;
-    init_j = center_j - NEIGHB_SIZE/2;
+    init_i = (center_i - NEIGHB_SIZE/2 + height) % height;
+    init_j = (center_j - NEIGHB_SIZE/2 + width) % width;
     end_i  = init_i + NEIGHB_SIZE;
     end_j  = init_j + NEIGHB_SIZE;
 }

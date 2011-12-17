@@ -60,7 +60,9 @@ bool MainWindow::save(QString filename)
 void MainWindow::chooseColor()
 {
     airlightColor = QColorDialog::getColor(airlightColor, this);
-    dehazeImage();
+    if (airlightColor.isValid()) {
+        dehazeImage();
+    }
 }
 
 void MainWindow::showEvent(QShowEvent *e)
@@ -72,10 +74,14 @@ void MainWindow::showEvent(QShowEvent *e)
 
 void MainWindow::dehazeImage(QImage image)
 {
+    if (image.isNull()) {
+        return;
+    }
+
     tmatrix *im = normQImage(image);
     dtriple a = normQColor(airlightColor);
 
-    dmatrix *transm = estimateTransmissionSingleAlbedo(im, a);
+    dmatrix *transm = estimateTransmissionMultiAlbedo(im, a);
     tmatrix *dehazed = removeAirlight(im, transm, a);
 
     dehazedModel->setImage(tmToQImage(dehazed));
