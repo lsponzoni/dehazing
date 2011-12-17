@@ -73,8 +73,8 @@ tmatrix *removeAirlight(tmatrix *image, dmatrix *transmission, dtriple airlight)
     double aG = airlight.snd;
     double aB = airlight.trd;
 
-    for (int i=0; i < image->w; i++) {
-        for (int j=0; j < image->h; j++) {
+    for (int i=0; i < image->h; i++) {
+        for (int j=0; j < image->w; j++) {
             dtriple imP = image->pos(i,j);
             double t = transmission->pos(i,j);
 

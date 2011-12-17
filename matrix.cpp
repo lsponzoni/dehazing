@@ -5,17 +5,15 @@
 
 tmatrix *normQImage(QImage im)
 {
+    if (im.isNull()) {
+        return NULL;
+    }
+
     tmatrix *norm = new tmatrix(im.width(), im.height());
 
     for (int x=0; x<norm->w; x++) {
         for (int y=0; y<norm->h; y++) {
-            QRgb iP = im.pixel(x,y);
-
-            double r = qRed(iP) * NORMALIZER;
-            double g = qGreen(iP) * NORMALIZER;
-            double b = qBlue(iP) * NORMALIZER;
-
-            norm->pos(y,x) = dtriple(r,g,b);
+            norm->pos(y,x) = normQRgb(im.pixel(x,y));
         }
     }
 

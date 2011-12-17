@@ -18,13 +18,14 @@ SOURCES += statistics.cpp \
     transmission.cpp \
     gui/imagemodel.cpp \
     gui/pixmapview.cpp \
-    gui/mainwindow.cpp
+    gui/mainwindow.cpp \
+    triple.cpp
 
 
 HEADERS += \
     matrix.h \
     statistics.h \
-    transmission.cpp \
+    transmission.h \
     triple.h \
     gui/imagemodel.h \
     gui/pixmapview.h \

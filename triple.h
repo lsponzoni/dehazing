@@ -1,6 +1,8 @@
 #ifndef TRIPLE_H
 #define TRIPLE_H
 
+#include <QColor>
+
 /* A simple container for three values,
  * working as a value
  */
@@ -18,5 +20,9 @@ struct triple
 
 // Common triple types
 typedef triple<double, double, double> dtriple;
+
+// Operations on triples
+dtriple normQColor(QColor color);
+dtriple normQRgb(QRgb color);
 
 #endif // TRIPLE_H

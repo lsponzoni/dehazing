@@ -3,6 +3,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+#include "transmission.h"
 #include "mainwindow.h"
 
 const QColor MainWindow::defaultAirlightColor = QColor(255,255,255);
@@ -71,7 +72,17 @@ void MainWindow::showEvent(QShowEvent *e)
 
 void MainWindow::dehazeImage(QImage image)
 {
-    // TODO
+    tmatrix *im = normQImage(image);
+    dtriple a = normQColor(airlightColor);
+
+    dmatrix *transm = estimateTransmission(im, a);
+    tmatrix *dehazed = removeAirlight(im, transm, a);
+
+    dehazedModel->setImage(tmToQImage(dehazed));
+
+    delete im;
+    delete transm;
+    delete dehazed;
 }
 
 void MainWindow::dehazeImage()
@@ -125,7 +136,7 @@ void MainWindow::setupViews()
     dehazedView->setGeometry(x() + width() + 20, y(),
                              256, 256);
     connect(dehazedModel, SIGNAL(pixmapChanged(QPixmap)),
-            originalView, SLOT(setPixmap(QPixmap)));
+            dehazedView, SLOT(setPixmap(QPixmap)));
 }
 
 void MainWindow::setupUi()
