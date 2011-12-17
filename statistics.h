@@ -6,7 +6,16 @@
 double sqr(double x);
 double norm(const triple<double,double,double> &x);
 
-double avg(double *vals, int n);
-double cov(double *xs, double *ys, int n);
+/* Simple estimator for the expectation of a random variable.
+ * The given array contains n samples of the variable.
+ */
+double expect(double *vals, int n);
+
+/* Simple estimator for the covariance of random varialbes
+ * The given arrays contains n samples of the variables.
+ */
+double covar(double *xs, double *ys, int n);
+
+
 
 #endif // STATISTICS_H

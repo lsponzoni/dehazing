@@ -43,7 +43,7 @@ dmatrix *estimateTransmission (tmatrix *image, dtriple airlight)
 
     // Estimate the eta
     int length = h.w * h.h;
-    double eta = cov(Ia.data, h.data, length) / cov(Ir.data, h.data, length);
+    double eta = covar(Ia.data, h.data, length) / covar(Ir.data, h.data, length);
 
     std::cout << "Estimated eta: " << eta << std::endl;
 
