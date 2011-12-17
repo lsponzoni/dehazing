@@ -16,7 +16,8 @@ SOURCES += \
     main.cpp \
     matrix.cpp \
     statistics.cpp \
-    transmission.cpp
+    transmission.cpp \
+    triple.cpp
 
 
 HEADERS += \
