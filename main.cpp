@@ -21,13 +21,20 @@ int main(int argc, char *argv[])
     QString outFile = "dehazed" + inFile;
 
     QImage image(inFile);
-    QImage dehazed = image;
+    if (image.isNull()) {
+        std::cout << "Couldn't read image " << inFile.toStdString() << std::endl;
+        return 0;
+    }
+
     tmatrix *im = normQImage(image);
 
     dtriple airlight(0.8, 0.8, 0.9);
     dmatrix *t = estimateTransmission(im, airlight);
 
     dmToQImage(t).save("trans" + inFile);
+
+    tmatrix *dhz = removeAirlight(im, t, airlight);
+    QImage dehazed = tmToQImage(dhz);
 
     std::cout << "Dehazed image " << inFile.toStdString() << std::endl;
     std::cout << "Saving to " << outFile.toStdString() << std::endl;
