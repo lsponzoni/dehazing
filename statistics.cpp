@@ -32,3 +32,4 @@ double cov(double *xs, double *ys, int n)
 
     return sum / n;
 }
+
