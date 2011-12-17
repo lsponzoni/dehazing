@@ -211,7 +211,7 @@ dmatrix *estimateTransmissionMultiAlbedo (tmatrix *image, dtriple airlight)
             h.pos(i,j) = (normA - iaP) / irP;
         }
     }
-    // TODO the methods
+
     dmatrix n(image->w, image->h);
     for (int i=0; i<image->h; i++) {
         for (int j=0; j<image->w; j++) {
@@ -267,12 +267,12 @@ double corr(int i, int j, dmatrix *fs, dmatrix *gs, dmatrix *o){
 
     double sum = 0;
     for(a; a < max_I; a++){
-        for(c = b; c < max_J; c++){
-            if(a != i && b1 != j){
-                double k = fs->pos(a,b) - ef;
-                double d = gs->pos(a,b) - eg;
+        for(int c = b; c < max_J; c++){
+            if(a != i && c != j){
+                double k = fs->pos(a,c) - ef;
+                double d = gs->pos(a,c) - eg;
 
-                sum +=  k * d * w(o->pos(i,j),o->pos(a, b), DEVIATION);
+                sum +=  k * d * w(o->pos(i,j),o->pos(a, c), DEVIATION);
             }
         }
     }
@@ -289,11 +289,11 @@ double expectation(int i, int j, dmatrix *fs, dmatrix *o, double Wx){
     double sum = 0;
 
     for(a; a < max_I; a++){
-        for(b; b < max_J; b++){
-            if(a != i && b != j){
+        for(int c = b; c < max_J; c++){
+            if(a != i && c != j){
                 double k = fs-> pos(i,j);
 
-                sum +=  k * w(o->pos(i,j),o->pos(a, b),DEVIATION);
+                sum +=  k * w(o->pos(i,j),o->pos(a, c),DEVIATION);
             }
         }
     }
@@ -307,9 +307,9 @@ double pound(int i, int j, dmatrix *o){
 
     double sum = 0;
     for(a; a < max_I; a++){
-        for(b1 = b; b1 < max_J; b1++){
-            if(a != i && b1 != j){
-                sum +=  w(o->pos(i,j),o->pos(a, b1),DEVIATION);
+        for(int c = b; c < max_J; c++){
+            if(a != i && c != j){
+                sum +=  w(o->pos(i,j),o->pos(a, c),DEVIATION);
             }
         }
     }
