@@ -1,6 +1,7 @@
 #include "triple.h"
 
-#define NORMALIZER (1/255.0)
+#define RENORMALIZER 255
+#define NORMALIZER (1.0/RENORMALIZER)
 
 dtriple normQColor(QColor color)
 {
@@ -18,4 +19,13 @@ dtriple normQRgb(QRgb color)
     double b = qBlue(color) * NORMALIZER;
 
     return dtriple(r,g,b);
+}
+
+QRgb dtToQRgb(dtriple color)
+{
+    double r = color.fst * RENORMALIZER;
+    double g = color.snd * RENORMALIZER;
+    double b = color.trd * RENORMALIZER;
+
+    return qRgb(r,g,b);
 }

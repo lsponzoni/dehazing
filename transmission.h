@@ -5,7 +5,9 @@
 #include "triple.h"
 #include "statistics.h"
 
-dmatrix *estimateTransmission(tmatrix *image, dtriple airlight);
+dmatrix *estimateTransmissionSingleAlbedo(tmatrix *image, dtriple airlight);
+dmatrix *estimateTransmissionMultiAlbedo(tmatrix *image, dtriple airlight);
+
 tmatrix *removeAirlight(tmatrix *image, dmatrix *transmission, dtriple airlight);
 
 #endif // TRANSMISSION_H

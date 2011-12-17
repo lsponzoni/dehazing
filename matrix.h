@@ -19,6 +19,14 @@ struct matrix
     T *data;
     int w, h;
 
+    // Creates an empty matrix
+    matrix() :
+        data(NULL),
+        w(0),
+        h(0)
+    {
+    }
+
     // Creates a matrix copying the given data.
     matrix(T *data, int w, int h) :
         data(new T[w*h]),

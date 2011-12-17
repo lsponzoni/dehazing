@@ -75,7 +75,7 @@ void MainWindow::dehazeImage(QImage image)
     tmatrix *im = normQImage(image);
     dtriple a = normQColor(airlightColor);
 
-    dmatrix *transm = estimateTransmission(im, a);
+    dmatrix *transm = estimateTransmissionSingleAlbedo(im, a);
     tmatrix *dehazed = removeAirlight(im, transm, a);
 
     dehazedModel->setImage(tmToQImage(dehazed));

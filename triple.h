@@ -25,4 +25,6 @@ typedef triple<double, double, double> dtriple;
 dtriple normQColor(QColor color);
 dtriple normQRgb(QRgb color);
 
+QRgb dtToQRgb(dtriple color);
+
 #endif // TRIPLE_H

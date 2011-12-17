@@ -12,13 +12,14 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 
-SOURCES += statistics.cpp \
+SOURCES += \
     main.cpp \
     matrix.cpp \
     transmission.cpp \
     gui/imagemodel.cpp \
     gui/pixmapview.cpp \
     gui/mainwindow.cpp \
+    statistics.cpp \
     triple.cpp
 
 
