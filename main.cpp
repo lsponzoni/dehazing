@@ -267,8 +267,8 @@ double corr(int i, int j, dmatrix *fs, dmatrix *gs, dmatrix *o){
 
     double sum = 0;
     for(a; a < max_I; a++){
-        for(b; b < max_J; b++){
-            if(a != i && b != j){
+        for(c = b; c < max_J; c++){
+            if(a != i && b1 != j){
                 double k = fs->pos(a,b) - ef;
                 double d = gs->pos(a,b) - eg;
 
@@ -307,9 +307,9 @@ double pound(int i, int j, dmatrix *o){
 
     double sum = 0;
     for(a; a < max_I; a++){
-        for(b; b < max_J; b++){
-            if(a != i && b != j){
-                sum +=  w(o->pos(i,j),o->pos(a, b),DEVIATION);
+        for(b1 = b; b1 < max_J; b1++){
+            if(a != i && b1 != j){
+                sum +=  w(o->pos(i,j),o->pos(a, b1),DEVIATION);
             }
         }
     }
@@ -319,18 +319,18 @@ double pound(int i, int j, dmatrix *o){
 void set_block(int &starti,int &startj, int &end_I, int &end_J, int i,int j,int h,int w){
     const int DIMENSION = 24;
 
-    starti = i - i % DIMENSION;
-    startj = j - j % DIMENSION;
+    starti = i - DIMENSION/2;
+    startj = j - DIMENSION/2;
 
     end_I = h;
     end_J = w;
 
-    if(starti + DIMENSION < end_I){
-        end_I = starti + DIMENSION;
+    if(i + DIMENSION/2 < end_I){
+        end_I = i + DIMENSION/2;
     }
 
-    if(startj + DIMENSION < end_J){
-        end_J = startj + DIMENSION;
+    if(j + DIMENSION/2 < end_J){
+        end_J = j + DIMENSION/2;
     }
 }
 
